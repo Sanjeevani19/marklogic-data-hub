@@ -36,6 +36,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   } = useContext(UserContext);
   const {
     searchOptions,
+      checkedOptions,
     setEntityClearQuery,
     setLatestJobFacet,
     resetSearchOptions
@@ -53,7 +54,9 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [endScroll, setEndScroll] = useState(false);
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
-  let sessionCount = 0;
+    const [checkedFacets, setCheckedFacets] = useState<any[]>([]);
+
+    let sessionCount = 0;
 
   const getEntityModel = async () => {
     try {
@@ -72,10 +75,13 @@ const Browse: React.FC<Props> = ({ location }) => {
   }
 
   const getSearchResults = async (allEntities: string[]) => {
-    try {
+      console.log("debug - setFacets called")
+      try {
       handleUserPreferences();
       setIsLoading(true);
-      const response = await axios({
+          console.log("debug - top setFacets called")
+
+          const response = await axios({
         method: 'POST',
         url: `/api/search`,
         data: {
@@ -88,7 +94,9 @@ const Browse: React.FC<Props> = ({ location }) => {
           pageLength: searchOptions.pageLength,
         }
       });
-      if (componentIsMounted.current) {
+          console.log("debug - middle setFacets called")
+
+          if (componentIsMounted.current) {
         setData(response.data.results);
         setFacets(response.data.facets);
         setTotalDocuments(response.data.total);
@@ -99,6 +107,10 @@ const Browse: React.FC<Props> = ({ location }) => {
     } finally {
       setIsLoading(false);
     }
+
+      console.log("debug - end setFacets called")
+
+
   }
 
   useEffect(() => {
@@ -127,7 +139,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     if (entities.length) {
       getSearchResults(entities);
     }
-  }, [searchOptions, entities, user.error.type]);
+  }, [searchOptions, entities, user.error.type, checkedOptions]);
 
 
   const tableSwitch = () => {
@@ -196,6 +208,10 @@ const Browse: React.FC<Props> = ({ location }) => {
   const updateSelectedFacets = (facets) => {
     setSelectedFacets(facets);
   }
+    const updateCheckedFacets = (facets) => {
+        setCheckedFacets(facets);
+    }
+
 
   return (
     <Layout>
@@ -205,6 +221,7 @@ const Browse: React.FC<Props> = ({ location }) => {
           selectedEntities={searchOptions.entityNames}
           entityDefArray={entityDefArray}
           facetRender={updateSelectedFacets}
+          checkFacetRender={updateCheckedFacets}
         />
       </Sider>
       <Content className={styles.content}>
@@ -245,7 +262,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                 </div>
               </div>
               <div className={styles.selectedFacets}>
-                <SelectedFacets selectedFacets={selectedFacets} />
+                <SelectedFacets selectedFacets={selectedFacets}  checkedFacets={checkedFacets}/>
               </div>
             </div>
 
@@ -260,7 +277,7 @@ const Browse: React.FC<Props> = ({ location }) => {
               : <SearchResults data={data} entityDefArray={entityDefArray} />
             }
             </div>
-            
+
             <br />
             <div>
               <SearchSummary

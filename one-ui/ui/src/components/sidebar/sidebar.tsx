@@ -24,23 +24,29 @@ interface Props {
   selectedEntities: string[];
   entityDefArray: any[];
   facetRender: (facets: any) => void;
+  checkFacetRender: (facets:any) =>void;
 };
 
 const Sidebar: React.FC<Props> = (props) => {
   const {
     searchOptions,
-    setAllSearchFacets
+    setAllSearchFacets,
+      checkedOptions,
+      setAllCheckedOptions
   } = useContext(SearchContext);
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
   const [hubFacets, setHubFacets] = useState<any[]>([]);
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.searchFacets);
+  const [allcheckedFacets, setAllCheckedFacets] = useState<any>(checkedOptions.searchFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [showApply, toggleApply] = useState(false);
   let integers = ['int', 'integer', 'short', 'long'];
   let decimals = ['decimal', 'double', 'float'];
 
   useEffect(() => {
-    if (props.facets) {
+      console.log("debug -> sidebar -> useEffect -> searchoptions.searchFacets", searchOptions.searchFacets)
+
+      if (props.facets) {
       const parsedFacets = facetParser(props.facets);
       const filteredHubFacets = hubPropertiesConfig.map(hubFacet => {
         let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
@@ -92,6 +98,8 @@ const Sidebar: React.FC<Props> = (props) => {
             }
           }
           props.facetRender(selectedFacets);
+            console.log("debug - sidebar - all selected facets in effect", selectedFacets)
+
         }
         if (!selectedFacets.some(item => item.constraint === 'createdOnRange')) {
           setDatePickerValue([null, null]);
@@ -105,6 +113,49 @@ const Sidebar: React.FC<Props> = (props) => {
       }
     }
   }, [props.selectedEntities, props.facets]);
+
+  useEffect(()=>{
+      console.log("debug -> sidebar -> useEffect -> checkedOptions.searchFacets", checkedOptions.searchFacets)
+      if (Object.entries(checkedOptions.searchFacets).length !== 0) {
+          let checkedFacets: any[] = [];
+          for (let constraint in checkedOptions.searchFacets) {
+              if (constraint === 'createdOnRange') {
+                  checkedFacets.push({ constraint, facet: checkedOptions.searchFacets[constraint]['rangeValues'] });
+                  toggleApply(false);
+              } else {
+                  let datatype = checkedOptions.searchFacets[constraint].dataType;
+                  if (datatype === 'xs:string' || datatype === 'string') {
+                      checkedOptions.searchFacets[constraint]['stringValues'].map(facet => {
+                          checkedFacets.push({ constraint, facet });
+                      });
+                  } else if (integers.includes(datatype) || decimals.includes(datatype)) {
+                      let rangeValues = checkedOptions.searchFacets[constraint].rangeValues
+                      checkedFacets.push({ constraint, rangeValues });
+                  } else if (datatype === 'xs:date' || datatype === 'date') {
+                      let rangeValues = checkedOptions.searchFacets[constraint].rangeValues
+                      checkedFacets.push({ constraint, rangeValues });
+                  } else if (datatype === 'xs:dateTime' || datatype === 'dateTime') {
+                      let rangeValues = checkedOptions.searchFacets[constraint].rangeValues;
+                      checkedFacets.push({ constraint, rangeValues });
+                  }
+              }
+              props.checkFacetRender(checkedFacets);
+              console.log("debug - sidebar - all checked facets in effect", checkedFacets)
+
+          }
+          if (!checkedFacets.some(item => item.constraint === 'createdOnRange')) {
+         //     setDatePickerValue([null, null]);
+          //    toggleApply(false)
+          }
+      } else {
+          props.checkFacetRender([]);
+         // setAllCheckedFacets({});
+        //  setDatePickerValue([null, null]);
+         // toggleApply(false);
+      }
+      //console.log("debug - sidebar - checkedFacets", checkedFacets)
+
+  },[checkedOptions.searchFacets, props.facets, props.selectedEntities])
 
   const onDateChange = (dateVal, dateArray) => {
     let updateFacets = { ...allSelectedFacets };
@@ -124,6 +175,7 @@ const Sidebar: React.FC<Props> = (props) => {
       setDatePickerValue([null, null]);
     }
     setAllSelectedFacets(updateFacets);
+      setAllCheckedOptions(updateFacets);
   }
 
   const updateSelectedFacets = (constraint: string, vals: string[], datatype: string) => {
@@ -164,9 +216,15 @@ const Sidebar: React.FC<Props> = (props) => {
       delete facets[constraint];
     }
     setAllSelectedFacets(facets);
+    console.log("debug - sidebar - updateSelected- allselected facets ", allSelectedFacets, "facets = ", facets );
+    setAllCheckedFacets(facets);
+    console.log("debug - sidebar - updateSeleceted allcheckedFacets - ", allcheckedFacets);
+    setAllCheckedOptions(facets);
+
   }
 
   const applyAllFacets = () => {
+      console.log("debug - sidebar clicked apply inside", allSelectedFacets)
     setAllSearchFacets(allSelectedFacets);
   }
 
@@ -234,6 +292,10 @@ const Sidebar: React.FC<Props> = (props) => {
       setHubFacets(newHubFacets);
     }
     setAllSelectedFacets(newAllSelectedfacets);
+     // console.log("debug - sidebar - addSelected Facets- allselected facets ", allSelectedFacets );
+      setAllCheckedFacets(newAllSelectedfacets);
+     // console.log("debug - sidebar - updateSeleceted allcheckedFacets - ", allcheckedFacets);
+      setAllCheckedOptions(newAllSelectedfacets);
   }
 
   const onNumberFacetChange = (datatype, facet, value) => {
@@ -242,6 +304,7 @@ const Sidebar: React.FC<Props> = (props) => {
       updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: value[0].toString(), upperBound: value[1].toString() } } }
     }
     setAllSelectedFacets(updateFacets);
+      setAllCheckedOptions(updateFacets);
   }
 
   const onDateFacetChange = (datatype, facet, value) => {
@@ -250,6 +313,7 @@ const Sidebar: React.FC<Props> = (props) => {
       updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: moment(value[0]).format('YYYY-MM-DD'), upperBound: moment(value[1]).format('YYYY-MM-DD') } } }
     }
     setAllSelectedFacets(updateFacets);
+      setAllCheckedOptions(updateFacets);
   }
 
   const onDateTimeFacetChange = (datatype, facet, value) => {
@@ -258,6 +322,7 @@ const Sidebar: React.FC<Props> = (props) => {
       updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: moment(value[0]).format('YYYY-MM-DDTHH:mm:ss'), upperBound: moment(value[1]).format('YYYY-MM-DDTHH:mm:ss') } } }
     }
     setAllSelectedFacets(updateFacets);
+      setAllCheckedOptions(updateFacets);
   }
 
   return (
@@ -359,11 +424,11 @@ const Sidebar: React.FC<Props> = (props) => {
                     break;
                   }
                   //add date type cases
-  
+
                   default:
                     break;
                 }
-  
+
                 if (step && facet.facetValues.length) {
                   return (
                     <div key={index}>
@@ -381,7 +446,7 @@ const Sidebar: React.FC<Props> = (props) => {
                       />
                     </div>
                   )
-                }                
+                }
               }
             }) :
               <div>No Facets</div>

@@ -27,16 +27,19 @@ interface Props {
 const Facet: React.FC<Props> = (props) => {
 
   const SHOW_MINIMUM = 3;
-  const {searchOptions} = useContext(SearchContext);
+  const {searchOptions, checkedOptions} = useContext(SearchContext);
   const [showFacets, setShowFacets] = useState(SHOW_MINIMUM);
   const [show, toggleShow] = useState(true);
   const [more, toggleMore] = useState(false);
   const [showApply, toggleApply] = useState(false);
   const [checked, setChecked] = useState<string[]>([]);
+  const [greyed, setGreyed] = useState<string[]>([]);
 
-  let checkedFacets: any[] = [];
+
+    let checkedFacets: any[] = [];
 
   useEffect(() => {
+      console.log("debug - facet.tsx - searchoptions.searchfacets", searchOptions.searchFacets)
     if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.searchFacets) {
         if (facet === props.constraint) {
@@ -44,7 +47,7 @@ const Facet: React.FC<Props> = (props) => {
           if (searchOptions.searchFacets[facet].dataType === 'xs:string') {
             valueType = 'stringValues';
           }
-         
+
           // TODO add support for non string facets
           const checkedArray = searchOptions.searchFacets[facet][valueType];
           if (checkedArray && checkedArray.length) {
@@ -52,7 +55,9 @@ const Facet: React.FC<Props> = (props) => {
             if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
               toggleApply(false);
             } else {
-              setChecked(checkedArray);
+                console.log("debug - checkedArray - searchoptions", checkedArray, "checked = ", checked)
+
+                setChecked(checkedArray);
             }
           }
         }
@@ -62,6 +67,40 @@ const Facet: React.FC<Props> = (props) => {
       toggleApply(false);
     }
   }, [searchOptions]);
+
+    useEffect(() => {
+        console.log("debug - facet.tsx - checkedOptions.searchfacets", checkedOptions.searchFacets, "constraint", props.constraint)
+            if (Object.entries(checkedOptions.searchFacets).length !== 0 && checkedOptions.searchFacets.hasOwnProperty(props.constraint)) {
+                for (let facet in checkedOptions.searchFacets) {
+                    if (facet === props.constraint) {
+                        let valueType = '';
+                        if (checkedOptions.searchFacets[facet].dataType === 'xs:string') {
+                            valueType = 'stringValues';
+                        }
+
+                        // TODO add support for non string facets
+                        const checkedArray = checkedOptions.searchFacets[facet][valueType];
+
+                        if (checkedArray && checkedArray.length) {
+                            // checking if arrays are equivalent
+                            if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
+                               // toggleApply(false);
+                            } else {
+                                console.log("debug - checkedArray - chekedOptions", checkedArray, "checked", checked)
+
+                                setChecked(checkedArray);
+                            }
+                        }
+                    }
+                }
+            } else {
+                if((Object.entries(searchOptions.searchFacets).length === 0 || (!searchOptions.searchFacets.hasOwnProperty(props.constraint)))) {
+                    setChecked([]);
+                }
+                //toggleApply(false);
+            }
+        }, [checkedOptions]);
+
 
   const checkFacetValues = (checkedValues) => {
     let updatedChecked = [...checked];
@@ -77,6 +116,9 @@ const Facet: React.FC<Props> = (props) => {
   const handleClick = (e) => {
     let index = checked.indexOf(e.target.value)
     // Selection
+
+      console.log("debug - facet - click event - targetval", e.target.value, "already checked ", checked)
+
     if (e.target.checked && index === -1) {
       setChecked([...checked, e.target.value]);
       toggleApply(true);
@@ -150,7 +192,7 @@ const Facet: React.FC<Props> = (props) => {
       }
       return props.name;
     }
-    
+
   return (
     <div className={styles.facetContainer} data-cy={stringConverter(props.name) + "-facet-block"}>
       <div className={styles.header}>
@@ -193,8 +235,8 @@ const Facet: React.FC<Props> = (props) => {
       {showApply && (
         <div className={styles.applyButtonContainer}>
           <MlButton
-            type="primary" 
-            size="small" 
+            type="primary"
+            size="small"
             data-cy={stringConverter(props.name) +"-facet-apply-button"}
             onClick={()=> props.applyAllFacets()}
           >Apply</MlButton>
