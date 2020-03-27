@@ -36,6 +36,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   } = useContext(UserContext);
   const {
     searchOptions,
+     // grey,
       checkedOptions,
     setEntityClearQuery,
     setLatestJobFacet,
@@ -55,6 +56,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
     const [checkedFacets, setCheckedFacets] = useState<any[]>([]);
+
 
     let sessionCount = 0;
 
@@ -139,7 +141,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     if (entities.length) {
       getSearchResults(entities);
     }
-  }, [searchOptions, entities, user.error.type, checkedOptions]);
+  }, [searchOptions, entities, user.error.type]);
 
 
   const tableSwitch = () => {

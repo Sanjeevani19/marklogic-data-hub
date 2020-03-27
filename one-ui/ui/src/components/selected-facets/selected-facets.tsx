@@ -25,7 +25,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
     clearDateFacet,
     clearRangeFacet,
       setAllSearchFacets,
-      setAllCheckedOptions
+    //  setAllCheckedOptions
    } = useContext(SearchContext);
 
   console.log("debug - seleceted-facets.tsx, checkedOptions", checkedOptions.searchFacets, "checkedFacets =", props.checkedFacets);
@@ -36,6 +36,10 @@ const SelectedFacets: React.FC<Props> = (props) => {
       setAllSearchFacets(checkedOptions.searchFacets);
       clearAllCheckedFacets();
 
+    }
+
+    const locallyClearCheckedFacet = (constraint, facet) =>{
+       // clearCheckedFacet()
     }
 
     const unCheckRest = (constraint, facet)=> {
@@ -199,6 +203,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                     size="small"
                     className={styles.facetGreyButton}
                     key={index}
+//                    onClick={()=> locallyClearCheckedFacet(item.constraint, item.facet)}
                     onClick={()=> clearCheckedFacet(item.constraint, item.facet)}
                     data-cy={`clear-${item.facet}`}
                     data-testid={`clear-${item.facet}`}

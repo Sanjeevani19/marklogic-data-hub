@@ -148,14 +148,17 @@ const Sidebar: React.FC<Props> = (props) => {
           //    toggleApply(false)
           }
       } else {
+          if (Object.entries(searchOptions.searchFacets).length === 0){
+              setAllSearchFacets({})
+          }
           props.checkFacetRender([]);
-         // setAllCheckedFacets({});
-        //  setDatePickerValue([null, null]);
-         // toggleApply(false);
+          setAllCheckedFacets({});
+         // setAllSelectedFacets({});
+
       }
       //console.log("debug - sidebar - checkedFacets", checkedFacets)
 
-  },[checkedOptions.searchFacets, props.facets, props.selectedEntities])
+  },[checkedOptions.searchFacets])
 
   const onDateChange = (dateVal, dateArray) => {
     let updateFacets = { ...allSelectedFacets };

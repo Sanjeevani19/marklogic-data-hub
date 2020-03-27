@@ -33,7 +33,7 @@ const Facet: React.FC<Props> = (props) => {
   const [more, toggleMore] = useState(false);
   const [showApply, toggleApply] = useState(false);
   const [checked, setChecked] = useState<string[]>([]);
-  const [greyed, setGreyed] = useState<string[]>([]);
+  
 
 
     let checkedFacets: any[] = [];
@@ -47,7 +47,6 @@ const Facet: React.FC<Props> = (props) => {
           if (searchOptions.searchFacets[facet].dataType === 'xs:string') {
             valueType = 'stringValues';
           }
-
           // TODO add support for non string facets
           const checkedArray = searchOptions.searchFacets[facet][valueType];
           if (checkedArray && checkedArray.length) {
@@ -56,7 +55,6 @@ const Facet: React.FC<Props> = (props) => {
               toggleApply(false);
             } else {
                 console.log("debug - checkedArray - searchoptions", checkedArray, "checked = ", checked)
-
                 setChecked(checkedArray);
             }
           }
@@ -86,19 +84,21 @@ const Facet: React.FC<Props> = (props) => {
                             if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
                                // toggleApply(false);
                             } else {
-                                console.log("debug - checkedArray - chekedOptions", checkedArray, "checked", checked)
-
                                 setChecked(checkedArray);
                             }
                         }
                     }
                 }
+                console.log("debug if - checkedArray - chekedOptions", "checked", checked)
             } else {
                 if((Object.entries(searchOptions.searchFacets).length === 0 || (!searchOptions.searchFacets.hasOwnProperty(props.constraint)))) {
                     setChecked([]);
+                console.log("debug else - checkedArray - chekedOptions", "checked", checked)
+
                 }
                 //toggleApply(false);
             }
+        // console.log("debug - checkedArray - chekedOptions", "checked", checked)
         }, [checkedOptions]);
 
 
@@ -116,13 +116,11 @@ const Facet: React.FC<Props> = (props) => {
   const handleClick = (e) => {
     let index = checked.indexOf(e.target.value)
     // Selection
-
-      console.log("debug - facet - click event - targetval", e.target.value, "already checked ", checked)
-
     if (e.target.checked && index === -1) {
       setChecked([...checked, e.target.value]);
       toggleApply(true);
-      props.updateSelectedFacets(props.constraint, [...checked, e.target.value], props.facetType);
+        console.log("debug - facet - click event - targetval", e.target.value, "already checked ", checked)
+        props.updateSelectedFacets(props.constraint, [...checked, e.target.value], props.facetType);
     }
     // Deselection
     else if (index !== -1) {

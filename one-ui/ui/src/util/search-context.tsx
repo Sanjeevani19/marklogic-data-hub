@@ -27,6 +27,7 @@ const defaultSearchOptions = {
 interface ISearchContextInterface {
   searchOptions: SearchContextInterface;
   checkedOptions: SearchContextInterface;
+
   setSearchFromUserPref: (username: string) => void;
   setQuery: (searchString: string) => void;
   setPage: (pageNumber: number, totalDocuments: number) => void;
@@ -44,6 +45,8 @@ interface ISearchContextInterface {
     setAllCheckedOptions: (facets: any) => void;
     clearCheckedFacet: (constraint: string, val: string) => void;
     clearAllCheckedFacets: () => void;
+    resetCheckedOptions: () => void;
+
 
 
 
@@ -65,7 +68,9 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearDateFacet: () => { },
   clearRangeFacet: () => { },
   resetSearchOptions: () => { },
-  setAllSearchFacets: () => { },
+    resetCheckedOptions: () => { },
+
+    setAllSearchFacets: () => { },
     setAllCheckedOptions: () => {},
     clearCheckedFacet: () => { },
     clearAllCheckedFacets: () => { },
@@ -77,6 +82,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
     const [checkedOptions, setCheckedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
+    const [grey, setGrey] = useState<any[]>([]);
+
 
     const { user } = useContext(UserContext);
 
@@ -197,9 +204,11 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     } else {
       delete facets[constraint]
     }
-      console.log("debug - clearing - later - searchoptions.searchFacets", facets, "constraint", constraint, "Val", val)
 
+      console.log("debug - clearing - later - facets", facets, "constraint", constraint, "Val", val)
       setSearchOptions({ ...searchOptions, searchFacets: facets })
+      console.log("debug - clearing - later - searchoptions.searchFacets", searchOptions.searchFacets, "constraint", constraint, "Val", val)
+
   }
 
     const clearCheckedFacet = (constraint: string, val: string) => {
@@ -214,12 +223,13 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         } else {
             delete facets[constraint]
         }
-        console.log("debug - clearing - later - clearOptions.searchFacets", facets, "constraint", constraint, "Val", val)
-
+      //  console.log("debug - clearing - later - clearOptions.searchFacets", facets, "constraint", constraint, "Val", val)
+        console.log("debug - clearing - later - facets", facets, "constraint", constraint, "Val", val)
         setCheckedOptions({ ...checkedOptions, searchFacets: facets })
-       // setCheckedOptions({ ...checkedOptions, searchFacets: facets })
+        console.log("debug - clearing - later - clearOptions.searchFacets", checkedOptions.searchFacets, "constraint", constraint, "Val", val)
 
-        //setSearchOptions({ ...checkedOptions, searchFacets: facets })
+        //resetCheckedOptions();
+
     }
 
   const clearAllFacets = () => {
@@ -241,6 +251,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
             pageNumber: 1,
             pageLength: checkedOptions.pageSize
         });
+        resetCheckedOptions();
     }
 
 /*
@@ -295,6 +306,12 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     setSearchOptions({ ...defaultSearchOptions });
   }
 
+    const resetCheckedOptions = () => {
+        setCheckedOptions({ ...defaultSearchOptions });
+
+        console.log("debug - resetting checkedOptions.searchFacets", checkedOptions.searchFacets)
+    }
+
   const setAllSearchFacets= (facets: any) => {
     setSearchOptions({
       ...searchOptions,
@@ -308,6 +325,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   }
 
     const setAllCheckedOptions = (facets: any) => {
+
         setCheckedOptions({
             ...checkedOptions,
             searchFacets: facets,
@@ -346,7 +364,9 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       setAllSearchFacets,
         setAllCheckedOptions,
         clearCheckedFacet,
-        clearAllCheckedFacets
+        clearAllCheckedFacets,
+        resetCheckedOptions
+
 
     }}>
       {children}
