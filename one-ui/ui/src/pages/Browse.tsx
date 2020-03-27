@@ -36,8 +36,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   } = useContext(UserContext);
   const {
     searchOptions,
-     // grey,
-      checkedOptions,
     setEntityClearQuery,
     setLatestJobFacet,
     resetSearchOptions
@@ -55,7 +53,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [endScroll, setEndScroll] = useState(false);
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
-    const [checkedFacets, setCheckedFacets] = useState<any[]>([]);
+    const [greyFacets, setGreyFacets] = useState<any[]>([]);
 
 
     let sessionCount = 0;
@@ -211,7 +209,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     setSelectedFacets(facets);
   }
     const updateCheckedFacets = (facets) => {
-        setCheckedFacets(facets);
+        setGreyFacets(facets);
     }
 
 
@@ -264,7 +262,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                 </div>
               </div>
               <div className={styles.selectedFacets}>
-                <SelectedFacets selectedFacets={selectedFacets}  checkedFacets={checkedFacets}/>
+                <SelectedFacets selectedFacets={selectedFacets}  greyFacets={greyFacets}/>
               </div>
             </div>
 

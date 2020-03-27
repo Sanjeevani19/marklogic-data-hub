@@ -26,7 +26,7 @@ const defaultSearchOptions = {
 
 interface ISearchContextInterface {
   searchOptions: SearchContextInterface;
-  checkedOptions: SearchContextInterface;
+  greyedOptions: SearchContextInterface;
 
   setSearchFromUserPref: (username: string) => void;
   setQuery: (searchString: string) => void;
@@ -42,10 +42,10 @@ interface ISearchContextInterface {
   clearRangeFacet: (range: string) => void;
   resetSearchOptions: () => void;
   setAllSearchFacets: (facets: any) => void;
-    setAllCheckedOptions: (facets: any) => void;
-    clearCheckedFacet: (constraint: string, val: string) => void;
-    clearAllCheckedFacets: () => void;
-    resetCheckedOptions: () => void;
+  setAllGreyedOptions: (facets: any) => void;
+  clearGreyFacet: (constraint: string, val: string) => void;
+  clearAllGreyFacets: () => void;
+  resetGreyedOptions: () => void;
 
 
 
@@ -54,7 +54,7 @@ interface ISearchContextInterface {
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
   searchOptions: defaultSearchOptions,
-    checkedOptions: defaultSearchOptions,
+    greyedOptions: defaultSearchOptions,
     setSearchFromUserPref: () => { },
   setQuery: () => { },
   setPage: () => { },
@@ -68,12 +68,12 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearDateFacet: () => { },
   clearRangeFacet: () => { },
   resetSearchOptions: () => { },
-    resetCheckedOptions: () => { },
+    resetGreyedOptions: () => { },
 
     setAllSearchFacets: () => { },
-    setAllCheckedOptions: () => {},
-    clearCheckedFacet: () => { },
-    clearAllCheckedFacets: () => { },
+    setAllGreyedOptions: () => {},
+    clearGreyFacet: () => { },
+    clearAllGreyFacets: () => { }
 
 
 });
@@ -81,8 +81,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
-    const [checkedOptions, setCheckedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
-    const [grey, setGrey] = useState<any[]>([]);
+    const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
 
 
     const { user } = useContext(UserContext);
@@ -211,9 +210,9 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
   }
 
-    const clearCheckedFacet = (constraint: string, val: string) => {
-      console.log("debug - clearing", checkedOptions.searchFacets, "constraint", constraint, "Val", val)
-        let facets = checkedOptions.searchFacets;
+    const clearGreyFacet = (constraint: string, val: string) => {
+      console.log("debug - clearing", greyedOptions.searchFacets, "constraint", constraint, "Val", val)
+        let facets = greyedOptions.searchFacets;
         let valueKey = '';
         if (facets[constraint].dataType === 'xs:string' || facets[constraint].dataType === 'string') {
             valueKey = 'stringValues';
@@ -225,10 +224,10 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         }
       //  console.log("debug - clearing - later - clearOptions.searchFacets", facets, "constraint", constraint, "Val", val)
         console.log("debug - clearing - later - facets", facets, "constraint", constraint, "Val", val)
-        setCheckedOptions({ ...checkedOptions, searchFacets: facets })
-        console.log("debug - clearing - later - clearOptions.searchFacets", checkedOptions.searchFacets, "constraint", constraint, "Val", val)
+        setGreyedOptions({ ...greyedOptions, searchFacets: facets })
+        console.log("debug - clearing - later - clearOptions.searchFacets", greyedOptions.searchFacets, "constraint", constraint, "Val", val)
 
-        //resetCheckedOptions();
+        //resetgreyedOptions();
 
     }
 
@@ -240,18 +239,18 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       pageNumber: 1,
       pageLength: searchOptions.pageSize
     });
-      clearAllCheckedFacets();
+      clearAllGreyFacets();
   }
 
-    const clearAllCheckedFacets = () => {
-        setCheckedOptions({
-            ...checkedOptions,
+    const clearAllGreyFacets = () => {
+        setGreyedOptions({
+            ...greyedOptions,
             searchFacets: {},
             start: 1,
             pageNumber: 1,
-            pageLength: checkedOptions.pageSize
+            pageLength: greyedOptions.pageSize
         });
-        resetCheckedOptions();
+        resetGreyedOptions();
     }
 
 /*
@@ -306,10 +305,10 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     setSearchOptions({ ...defaultSearchOptions });
   }
 
-    const resetCheckedOptions = () => {
-        setCheckedOptions({ ...defaultSearchOptions });
+    const resetGreyedOptions = () => {
+        setGreyedOptions({ ...defaultSearchOptions });
 
-        console.log("debug - resetting checkedOptions.searchFacets", checkedOptions.searchFacets)
+        //console.log("debug - resetting greyedOptions.searchFacets", greyedOptions.searchFacets)
     }
 
   const setAllSearchFacets= (facets: any) => {
@@ -324,16 +323,16 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
   }
 
-    const setAllCheckedOptions = (facets: any) => {
+    const setAllGreyedOptions = (facets: any) => {
 
-        setCheckedOptions({
-            ...checkedOptions,
+        setGreyedOptions({
+            ...greyedOptions,
             searchFacets: facets,
             start: 1,
             pageNumber: 1,
-            pageLength: checkedOptions.pageSize
+            pageLength: greyedOptions.pageSize
         });
-        console.log("debug - setall checkedoptions called , checkedOptions.searchFacets", checkedOptions.searchFacets)
+        //console.log("debug - setall greyedOptions called , greyedOptions.searchFacets", greyedOptions.searchFacets)
     }
 
 
@@ -347,7 +346,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   return (
     <SearchContext.Provider value={{
       searchOptions,
-        checkedOptions,
+        greyedOptions,
       setSearchFromUserPref,
       setQuery,
       setPage,
@@ -362,10 +361,10 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       clearRangeFacet,
       resetSearchOptions,
       setAllSearchFacets,
-        setAllCheckedOptions,
-        clearCheckedFacet,
-        clearAllCheckedFacets,
-        resetCheckedOptions
+        setAllGreyedOptions,
+        clearGreyFacet,
+        clearAllGreyFacets,
+        resetGreyedOptions
 
 
     }}>
