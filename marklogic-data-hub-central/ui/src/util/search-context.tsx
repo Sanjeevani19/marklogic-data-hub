@@ -49,7 +49,7 @@ interface ISearchContextInterface {
   setEntity: (option: string) => void;
   setNextEntity: (option: string) => void;
   setEntityClearQuery: (option: string) => void;
-  setLatestJobFacet: (vals: string, option: string) => void;
+  setLatestJobFacet: (vals: string, option: string, zeroState: boolean) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
   clearDateFacet: () => void;
@@ -228,7 +228,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
-  const setLatestJobFacet = (vals: string, option: string) => {
+  const setLatestJobFacet = (vals: string, option: string, zeroState: boolean) => {
     let facets = {};
     facets = { createdByJob: { dataType: "string", stringValues: [vals] } };
     setSearchOptions({
@@ -237,7 +237,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       selectedFacets: facets,
       entityTypeIds: [option],
       pageNumber: 1,
-      pageLength: searchOptions.pageSize
+      pageLength: searchOptions.pageSize,
+      zeroState: false
     });
   }
 

@@ -248,8 +248,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
             <MLTooltip title={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed}>
               <Link
                 to={{
-                  pathname: "/browse",
-                  state: { entityName: parseText[0], jobId: parseText[1] }
+                  pathname: "/tiles/explore",
+                  state: { entityName: parseText[0], jobId: parseText[1], zeroState: false }
                 }}
                 data-testid={parseText[0]+ '-last-processed'}
               >
@@ -283,7 +283,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           </MLTooltip>
           <MLTooltip title={ModelingTooltips.revertIcon}>
             <FontAwesomeIcon
-              data-testid={text + '-revert-icon'} 
+              data-testid={text + '-revert-icon'}
               className={(!props.canWriteEntityModel && props.canReadEntityModel) || !isAnyEntityModified || !isEntityModified(text) ? styles.iconRevertReadOnly : styles.iconRevert}
               icon={faUndo}
               onClick={(event) => {
