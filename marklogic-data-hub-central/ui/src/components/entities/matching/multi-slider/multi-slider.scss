@@ -1,13 +1,13 @@
 .multiSlider {
 
   height: 120px;
-  margin-top: 80px;
   width: 100%;
 
   .slider {
     position: relative;
     width: 100%;
     height: 80px;
+    margin-top: 80px;
   }
 
   .sliderRail {
@@ -18,6 +18,16 @@
     border-radius: 2px;
     background-color: #b5b8cd;
   }
+
+  .sliderOptions {
+    font-weight: 500;
+    font-size: 16px;
+    color: #CCCCCC;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
 
   .handle {
     position: absolute;
@@ -33,32 +43,34 @@
     background-color: #fff;
   }
 
-  .tooltipContainer {
+    .tooltipContainer {
 
     position: absolute;
     margin-left: -11px;
     margin-top: -5px;
 
     .tooltip {
-      position: relative;
-      display: block;
-      width: 200px;
-      bottom: 10px;
-      right: 92px;
-  
+        position: relative;
+        display: block;
+        width: 100px;
+        right: 41px;
+
       .tooltipText {
         margin-top: 2px;
-        width: 200px;
         background-color: #444;
         color: #f0f0f0;
         opacity: 0.8;
         text-align: center;
-        border-radius: 6px;
-        padding: 5px 0;
+        border-radius: 3px;
         position: relative;
         z-index: 1;
       }
-  
+
+      .tooltipText:hover{
+        z-index:3;
+        background-color: #2b95d6;
+      }
+
       .tooltipText::after {
         content: "";
         position: absolute;
@@ -72,3 +84,5 @@
     }
   }
 }
+
+

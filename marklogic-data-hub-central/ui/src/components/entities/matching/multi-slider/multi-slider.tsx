@@ -15,7 +15,7 @@ export function Handle({
           )) }
         </div>
       </div>
-      <div 
+      <div
         className={'handle'}
         style={{
           left: `${percent}%`,
@@ -57,7 +57,7 @@ const MultiSlider = (props) => {
     return (
       <div className={'multiSlider'}>
         <Slider
-            mode={1} 
+            mode={1}
             className={'slider'}
             domain={[0, 64]}
             values={options.map(opt => opt.value)} // Array of starting values
@@ -69,7 +69,7 @@ const MultiSlider = (props) => {
         >
           <div className={'sliderRail'}/>
           <Handles>
-            {({ handles, getHandleProps }) => { 
+            {({ handles, getHandleProps }) => {
               return (
                   <div className={'sliderHandles'}>
                   { handles.map((handle, index) => {
@@ -87,6 +87,7 @@ const MultiSlider = (props) => {
             }}
           </Handles>
         </Slider>
+          <div className={'sliderOptions'}><span>LOW</span><span>MEDIUM</span><span>HIGH</span></div>
       </div>
     )
 }

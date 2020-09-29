@@ -42,6 +42,7 @@
     "react-resizable": "^1.10.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
+    "react-show-more-text": "^1.4.4",
     "react-split-pane": "^0.1.91",
     "react-xml-viewer": "^1.0.3",
     "reactour": "^1.15.2",
