@@ -414,7 +414,7 @@ describe('save/manage queries scenarios, developer role', () => {
         // browsePage.getResetQueryButton().click();
         browsePage.getExploreButton().should('be.visible');
         browsePage.getExploreButton().click();
-        //verify no confirmation modal after reset. 
+        //verify no confirmation modal after reset.
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
         browsePage.getSaveQueriesDropdown().should('be.visible');
@@ -586,5 +586,29 @@ describe('User without hub-central-saved-query-user role should not see saved qu
         browsePage.getFacetApplyButton().click();
         browsePage.waitForSpinnerToDisappear();
         browsePage.getSaveModalIcon().should('not.be.visible');
+    });
+});
+
+describe('Verify hub-central-user can see save query button and is disabled', () => {
+    beforeEach(() => {
+        cy.visit('/');
+        cy.contains(Application.title);
+        cy.loginAsTestUserWithRoles( "hub-central-user").withRequest();
+        cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+        cy.waitUntil(() => browsePage.getExploreButton()).click();
+        browsePage.waitForSpinnerToDisappear();
+        browsePage.waitForTableToLoad();
+    });
+
+    it('Apply numeric facet values multiple times, clears the previous values and applies the new one, clearing date range facet clears selected facet', () => {
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
+        browsePage.getSelectedFacets().should('exist');
+        browsePage.getGreySelectedFacets('Adams Cole').should('exist');
+        browsePage.getFacetApplyButton().click();
+        browsePage.waitForSpinnerToDisappear();
+        browsePage.getSaveModalIcon().should('be.visible');
+        browsePage.getSaveModalIcon().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
     });
 });
